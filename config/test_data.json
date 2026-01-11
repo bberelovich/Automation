@@ -1,0 +1,6 @@
+{
+  "search_query": "fish", 
+  "max_price": 50,
+  "items_to_select": 3,
+  "budget_per_item": 60
+}
