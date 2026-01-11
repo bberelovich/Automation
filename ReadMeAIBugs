@@ -1,0 +1,19 @@
+1. Mixing Libraries (Unnecessary Imports)
+The Problem: The code imports webdriver from the Selenium library while also importing sync_playwright. The actual automation logic exclusively uses Playwright. The Selenium import is redundant, confusing to other developers, and adds unnecessary weight/dependencies to the project.
+
+The Fix: Remove the line from selenium import webdriver.
+
+2. Improper Resource Management
+The Problem: The code initiates Playwright using browser = sync_playwright().start().chromium.launch(). While the browser is closed at the end, the Playwright object itself (created by .start()) is never explicitly stopped. This can lead to memory leaks or "zombie" processes remaining open after execution.
+
+The Fix: Use a Context Manager (with sync_playwright() as p:) to ensure a clean setup and teardown of all resources automatically.
+
+3. Use of Hardcoded Waits
+The Problem: Utilizing time.sleep(2) and time.sleep(3) is considered a bad practice ("Flaky tests"). Web page load times vary; sometimes 2 seconds isn't enough (causing failure), and other times it is too long (making the test unnecessarily slow).
+
+The Fix: Rely on Playwright's built-in Auto-waiting mechanism or use explicit waits/assertions (e.g., page.wait_for_selector(...) or expect(locator).to_be_visible()).
+
+4. Generic and Brittle Selectors
+The Problem: The selector page.locator(".button").click() is too generic. A generic class name like .button likely exists on multiple elements on the page. The code might interact with the wrong button (the first one found) or fail due to ambiguity if multiple elements match.
+
+The Fix: Use a specific, robust selector such as a unique ID, a data attribute (e.g., data-testid), or a more specific combination (e.g., button[type='submit']).
